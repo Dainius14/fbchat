@@ -31,15 +31,12 @@ try:
 except NameError:
     pass
 
-
-
 # Log settings
 log = logging.getLogger("client")
 log.setLevel(logging.DEBUG)
 # Creates the console handler
 handler = logging.StreamHandler()
 log.addHandler(handler)
-
 
 class Client(object):
     """A client for the Facebook Chat (Messenger).
@@ -80,11 +77,11 @@ class Client(object):
             user_agent = choice(USER_AGENTS)
 
         self._header = {
-            'Content-Type' : 'application/x-www-form-urlencoded',
-            'Referer' : ReqUrl.BASE,
-            'Origin' : ReqUrl.BASE,
-            'User-Agent' : user_agent,
-            'Connection' : 'keep-alive',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Referer': ReqUrl.BASE,
+            'Origin': ReqUrl.BASE,
+            'User-Agent': user_agent,
+            'Connection': 'keep-alive',
         }
 
         # Configure the logger differently based on the 'debug' and 'info_log' parameters
@@ -107,15 +104,21 @@ class Client(object):
         self.onLoggedIn = EventHook(email=str)
         self.onListening = EventHook()
 
-        self.onMessage = EventHook(mid=str, author_id=str, message=str, thread_id=int, thread_type=ThreadType, ts=str, metadata=dict)
-        self.onColorChange = EventHook(mid=str, author_id=str, new_color=str, thread_id=str, thread_type=ThreadType, ts=str, metadata=dict)
-        self.onEmojiChange = EventHook(mid=str, author_id=str, new_emoji=str, thread_id=str, thread_type=ThreadType, ts=str, metadata=dict)
-        self.onTitleChange = EventHook(mid=str, author_id=str, new_title=str, thread_id=str, thread_type=ThreadType, ts=str, metadata=dict)
-        self.onNicknameChange = EventHook(mid=str, author_id=str, changed_for=str, new_title=str, thread_id=str, thread_type=ThreadType, ts=str, metadata=dict)
+        self.onMessage = EventHook(mid=str, author_id=str, message=str, thread_id=int, thread_type=ThreadType, ts=str,
+                                   metadata=dict)
+        self.onColorChange = EventHook(mid=str, author_id=str, new_color=str, thread_id=str, thread_type=ThreadType,
+                                       ts=str, metadata=dict)
+        self.onEmojiChange = EventHook(mid=str, author_id=str, new_emoji=str, thread_id=str, thread_type=ThreadType,
+                                       ts=str, metadata=dict)
+        self.onTitleChange = EventHook(mid=str, author_id=str, new_title=str, thread_id=str, thread_type=ThreadType,
+                                       ts=str, metadata=dict)
+        self.onNicknameChange = EventHook(mid=str, author_id=str, changed_for=str, new_title=str, thread_id=str,
+                                          thread_type=ThreadType, ts=str, metadata=dict)
 
-
-        self.onMessageSeen = EventHook(seen_by=str, thread_id=str, thread_type=ThreadType, seen_ts=int, delivered_ts=int, metadata=dict)
-        self.onMessageDelivered = EventHook(msg_ids=list, delivered_for=str, thread_id=str, thread_type=ThreadType, ts=int, metadata=dict)
+        self.onMessageSeen = EventHook(seen_by=str, thread_id=str, thread_type=ThreadType, seen_ts=int,
+                                       delivered_ts=int, metadata=dict)
+        self.onMessageDelivered = EventHook(msg_ids=list, delivered_for=str, thread_id=str, thread_type=ThreadType,
+                                            ts=int, metadata=dict)
         self.onMarkedSeen = EventHook(threads=list, seen_ts=int, delivered_ts=int, metadata=dict)
 
         self.onInbox = EventHook(unseen=int, unread=int, recent_unread=int)
@@ -131,49 +134,53 @@ class Client(object):
         self.onLoggedIn += lambda email: log.info("Login of %s successful." % email)
         self.onListening += lambda: log.info("Listening...")
 
-        self.onMessage += lambda mid, author_id, message, thread_id, thread_type, ts, metadata:\
+        self.onMessage += lambda mid, author_id, message, thread_id, thread_type, ts, metadata: \
             log.info("Message from %s in %s (%s): %s" % (author_id, thread_id, thread_type.name, message))
 
-        self.onColorChange += lambda mid, author_id, new_color, thread_id, thread_type, ts, metadata:\
+        self.onColorChange += lambda mid, author_id, new_color, thread_id, thread_type, ts, metadata: \
             log.info("Color change from %s in %s (%s): %s" % (author_id, thread_id, thread_type.name, new_color))
-        self.onEmojiChange += lambda mid, author_id, new_emoji, thread_id, thread_type, ts, metadata:\
+        self.onEmojiChange += lambda mid, author_id, new_emoji, thread_id, thread_type, ts, metadata: \
             log.info("Emoji change from %s in %s (%s): %s" % (author_id, thread_id, thread_type.name, new_emoji))
-        self.onTitleChange += lambda mid, author_id, new_title, thread_id, thread_type, ts, metadata:\
+        self.onTitleChange += lambda mid, author_id, new_title, thread_id, thread_type, ts, metadata: \
             log.info("Title change from %s in %s (%s): %s" % (author_id, thread_id, thread_type.name, new_title))
-        self.onNicknameChange += lambda mid, author_id, new_title, changed_for, thread_id, thread_type, ts, metadata:\
-            log.info("Nickname change from %s in %s (%s) for %s: %s" % (author_id, thread_id, thread_type.name, changed_for, new_title))
+        self.onNicknameChange += lambda mid, author_id, new_title, changed_for, thread_id, thread_type, ts, metadata: \
+            log.info("Nickname change from %s in %s (%s) for %s: %s" % (
+            author_id, thread_id, thread_type.name, changed_for, new_title))
 
-        self.onPeopleAdded += lambda added_ids, author_id, thread_id:\
+        self.onPeopleAdded += lambda added_ids, author_id, thread_id: \
             log.info("%s added: %s" % (author_id, [x for x in added_ids]))
-        self.onPersonRemoved += lambda removed_id, author_id, thread_id:\
+        self.onPersonRemoved += lambda removed_id, author_id, thread_id: \
             log.info("%s removed: %s" % (author_id, removed_id))
 
+        self.onMessageSeen += lambda seen_by, thread_id, thread_type, seen_ts, delivered_ts, metadata: \
+            log.info("Messages seen by %s in %s (%s) at %ss", seen_by, thread_id, thread_type.name, seen_ts / 1000)
+        self.onMessageDelivered += lambda msg_ids, delivered_for, thread_id, thread_type, ts, metadata: \
+            log.info("Messages %s delivered to %s in %s (%s) at %ss", msg_ids, delivered_for, thread_id,
+                     thread_type.name, ts / 1000)
+        self.onMarkedSeen += lambda threads, seen_ts, delivered_ts, metadata: \
+            log.info("Marked messages as seen in threads %s at %ss", [(x[0], x[1].name) for x in threads],
+                     seen_ts / 1000)
 
-        self.onMessageSeen += lambda seen_by, thread_id, thread_type, seen_ts, delivered_ts, metadata:\
-            log.info("Messages seen by %s in %s (%s) at %ss", seen_by, thread_id, thread_type.name, seen_ts/1000)
-        self.onMessageDelivered += lambda msg_ids, delivered_for, thread_id, thread_type, ts, metadata:\
-            log.info("Messages %s delivered to %s in %s (%s) at %ss", msg_ids, delivered_for, thread_id, thread_type.name, ts/1000)
-        self.onMarkedSeen += lambda threads, seen_ts, delivered_ts, metadata:\
-            log.info("Marked messages as seen in threads %s at %ss", [(x[0], x[1].name) for x in threads], seen_ts/1000)
-
-        self.onUnknownMesssageType += lambda msg: log.info("Unknown message type received: %s" % msg)
+        self.onUnknownMesssageType += lambda msg: log.debug("Unknown message type received: %s" % msg)
         self.onMessageError += lambda exception, msg: log.exception(exception)
 
     def _checkOldEventHook(self, old_event, deprecated_in='0.10.3'):
         if hasattr(type(self), old_event):
-            deprecation('Client.{}'.format(old_event), deprecated_in=deprecated_in, details='Use new event system instead')
+            deprecation('Client.{}'.format(old_event), deprecated_in=deprecated_in,
+                        details='Use new event system instead')
             return True
         else:
             return False
 
     def _setupOldEventHooks(self):
         if self._checkOldEventHook('on_message', deprecated_in='0.7.0'):
-            self.onMessage += lambda mid, author_id, message, thread_id, thread_type, ts, metadata:\
-                                     self.on_message(mid, author_id, None, message, metadata)
+            self.onMessage += lambda mid, author_id, message, thread_id, thread_type, ts, metadata: \
+                self.on_message(mid, author_id, None, message, metadata)
 
         if self._checkOldEventHook('on_message_new'):
-            self.onMessage += lambda mid, author_id, message, thread_id, thread_type, ts, metadata:\
-                                     self.on_message_new(mid, author_id, message, metadata, thread_id, True if thread_type is ThreadType.USER else False)
+            self.onMessage += lambda mid, author_id, message, thread_id, thread_type, ts, metadata: \
+                self.on_message_new(mid, author_id, message, metadata, thread_id,
+                                    True if thread_type is ThreadType.USER else False)
 
         if self._checkOldEventHook('on_friend_request'):
             self.onFriendRequest += lambda from_id: self.on_friend_request(from_id)
@@ -185,13 +192,17 @@ class Client(object):
             self.onSeen += lambda seen_by, thread_id, timestamp: self.on_read(seen_by, thread_id, timestamp)
 
         if self._checkOldEventHook('on_people_added'):
-            self.onPeopleAdded += lambda added_ids, author_id, thread_id: self.on_people_added(added_ids, author_id, thread_id)
+            self.onPeopleAdded += lambda added_ids, author_id, thread_id: self.on_people_added(added_ids, author_id,
+                                                                                               thread_id)
 
         if self._checkOldEventHook('on_person_removed'):
-            self.onPersonRemoved += lambda removed_id, author_id, thread_id: self.on_person_removed(removed_id, author_id, thread_id)
+            self.onPersonRemoved += lambda removed_id, author_id, thread_id: self.on_person_removed(removed_id,
+                                                                                                    author_id,
+                                                                                                    thread_id)
 
         if self._checkOldEventHook('on_inbox'):
-            self.onInbox += lambda unseen, unread, recent_unread: self.on_inbox(None, unseen, unread, None, recent_unread, None)
+            self.onInbox += lambda unseen, unread, recent_unread: self.on_inbox(None, unseen, unread, None,
+                                                                                recent_unread, None)
 
         if self._checkOldEventHook('on_qprimer'):
             pass
@@ -246,12 +257,12 @@ class Client(object):
         return self._session.post(url, headers=self._header, data=query, timeout=timeout)
 
     def _postFile(self, url, files=None, timeout=30):
-        payload=self._generatePayload(None)
+        payload = self._generatePayload(None)
         return self._session.post(url, data=payload, timeout=timeout, files=files)
 
     def _postLogin(self):
         self.payloadDefault = {}
-        self.client_id = hex(int(random()*2147483648))[2:]
+        self.client_id = hex(int(random() * 2147483648))[2:]
         self.start_time = now()
         self.uid = str(self._session.cookies['c_user'])
         self.user_channel = "p_" + self.uid
@@ -261,28 +272,28 @@ class Client(object):
         soup = bs(r.text, "lxml")
         log.debug(r.text)
         log.debug(r.url)
-        self.fb_dtsg = soup.find("input", {'name':'fb_dtsg'})['value']
-        self.fb_h = soup.find("input", {'name':'h'})['value']
+        self.fb_dtsg = soup.find("input", {'name': 'fb_dtsg'})['value']
+        self.fb_h = soup.find("input", {'name': 'h'})['value']
         for i in self.fb_dtsg:
             self.ttstamp += str(ord(i))
         self.ttstamp += '2'
         # Set default payload
-        self.payloadDefault['__rev'] = int(r.text.split('"revision":',1)[1].split(",",1)[0])
+        self.payloadDefault['__rev'] = int(r.text.split('"revision":', 1)[1].split(",", 1)[0])
         self.payloadDefault['__user'] = self.uid
         self.payloadDefault['__a'] = '1'
         self.payloadDefault['ttstamp'] = self.ttstamp
         self.payloadDefault['fb_dtsg'] = self.fb_dtsg
 
         self.form = {
-            'channel' : self.user_channel,
-            'partition' : '-2',
-            'clientid' : self.client_id,
-            'viewer_uid' : self.uid,
-            'uid' : self.uid,
-            'state' : 'active',
-            'format' : 'json',
-            'idle' : 0,
-            'cap' : '8'
+            'channel': self.user_channel,
+            'partition': '-2',
+            'clientid': self.client_id,
+            'viewer_uid': self.uid,
+            'uid': self.uid,
+            'state': 'active',
+            'format': 'json',
+            'idle': 0,
+            'cap': '8'
         }
 
         self.prev = now()
@@ -294,7 +305,8 @@ class Client(object):
             raise Exception("Email and password not found.")
 
         soup = bs(self._get(ReqUrl.MOBILE).text, "lxml")
-        data = dict((elem['name'], elem['value']) for elem in soup.findAll("input") if elem.has_attr('value') and elem.has_attr('name'))
+        data = dict((elem['name'], elem['value']) for elem in soup.findAll("input") if
+                    elem.has_attr('value') and elem.has_attr('name'))
         data['email'] = self.email
         data['pass'] = self.password
         data['login'] = 'Log In'
@@ -321,8 +333,8 @@ class Client(object):
 
         s = input('Please enter your 2FA code --> ')
         data['approvals_code'] = s
-        data['fb_dtsg'] = soup.find("input", {'name':'fb_dtsg'})['value']
-        data['nh'] = soup.find("input", {'name':'nh'})['value']
+        data['fb_dtsg'] = soup.find("input", {'name': 'fb_dtsg'})['value']
+        data['nh'] = soup.find("input", {'name': 'nh'})['value']
         data['submit[Submit Code]'] = 'Submit Code'
         data['codes_submitted'] = 0
         log.info('Submitting 2FA code.')
@@ -332,9 +344,9 @@ class Client(object):
         if 'home' in r.url:
             return r
 
-        del(data['approvals_code'])
-        del(data['submit[Submit Code]'])
-        del(data['codes_submitted'])
+        del (data['approvals_code'])
+        del (data['submit[Submit Code]'])
+        del (data['codes_submitted'])
 
         data['name_action_selected'] = 'save_device'
         data['submit[Continue]'] = 'Continue'
@@ -344,14 +356,14 @@ class Client(object):
         if 'home' in r.url:
             return r
 
-        del(data['name_action_selected'])
+        del (data['name_action_selected'])
         log.info('Starting Facebook checkup flow.')  # At this stage, we have dtsg, nh, submit[Continue]
         r = self._cleanPost(ReqUrl.CHECKPOINT, data)
 
         if 'home' in r.url:
             return r
 
-        del(data['submit[Continue]'])
+        del (data['submit[Continue]'])
         data['submit[This was me]'] = 'This Was Me'
         log.info('Verifying login attempt.')  # At this stage, we have dtsg, nh, submit[This was me]
         r = self._cleanPost(ReqUrl.CHECKPOINT, data)
@@ -359,7 +371,7 @@ class Client(object):
         if 'home' in r.url:
             return r
 
-        del(data['submit[This was me]'])
+        del (data['submit[This was me]'])
         data['submit[Continue]'] = 'Continue'
         data['name_action_selected'] = 'save_device'
         log.info('Saving device again.')  # At this stage, we have dtsg, nh, submit[Continue], name_action_selected
@@ -385,7 +397,7 @@ class Client(object):
         # Quick check to see if session_cookies is formatted properly
         if not session_cookies or 'c_user' not in session_cookies:
             return False
-        
+
         # Load cookies into current session
         self._session.cookies = requests.cookies.merge_cookies(self._session.cookies, session_cookies)
         self._postLogin()
@@ -393,16 +405,16 @@ class Client(object):
 
     def login(self, email, password, max_retries=5):
         self.onLoggingIn(email=email)
-        
+
         if not (email and password):
             raise Exception("Email and password not set.")
 
         self.email = email
         self.password = password
 
-        for i in range(1, max_retries+1):
+        for i in range(1, max_retries + 1):
             if not self._login():
-                log.warning("Attempt #{} failed{}".format(i,{True:', retrying'}.get(i < max_retries, '')))
+                log.warning("Attempt #{} failed{}".format(i, {True: ', retrying'}.get(i < max_retries, '')))
                 time.sleep(1)
                 continue
             else:
@@ -417,10 +429,10 @@ class Client(object):
             'h': self.fb_h
         }
 
-        payload=self._generatePayload(data)
+        payload = self._generatePayload(data)
         r = self._session.get(ReqUrl.LOGOUT, headers=self._header, params=payload, timeout=timeout)
         # reset value
-        self.payloadDefault={}
+        self.payloadDefault = {}
         self._session = requests.session()
         self.req_counter = 1
         self.seq = "0"
@@ -450,7 +462,7 @@ class Client(object):
         # type: (str, ThreadType) -> (str, ThreadType)
         """
         Checks if thread ID is given, checks if default is set and returns correct values
-        
+
         :raises ValueError: if thread ID is not given and there is no default
         :return: tuple of thread ID and thread type
         """
@@ -494,12 +506,12 @@ class Client(object):
         """
 
         payload = {
-            'value' : name.lower(),
-            'viewer' : self.uid,
-            'rsp' : "search",
-            'context' : "search",
-            'path' : "/home.php",
-            'request_id' : str(uuid1()),
+            'value': name.lower(),
+            'viewer': self.uid,
+            'rsp': "search",
+            'context': "search",
+            'path': "/home.php",
+            'request_id': str(uuid1()),
         }
 
         r = self._get(ReqUrl.SEARCH, payload)
@@ -509,8 +521,7 @@ class Client(object):
         for entry in j['payload']['entries']:
             if entry['type'] == 'user':
                 users.append(User(entry))
-        return users # have bug TypeError: __repr__ returned non-string (type bytes)
-
+        return users  # have bug TypeError: __repr__ returned non-string (type bytes)
 
     """
     SEND METHODS
@@ -523,31 +534,31 @@ class Client(object):
         date = datetime.now()
         data = {
             'client': self.client,
-            'author' : 'fbid:' + str(self.uid),
-            'timestamp' : timestamp,
-            'timestamp_absolute' : 'Today',
-            'timestamp_relative' : str(date.hour) + ":" + str(date.minute).zfill(2),
-            'timestamp_time_passed' : '0',
-            'is_unread' : False,
-            'is_cleared' : False,
-            'is_forward' : False,
-            'is_filtered_content' : False,
+            'author': 'fbid:' + str(self.uid),
+            'timestamp': timestamp,
+            'timestamp_absolute': 'Today',
+            'timestamp_relative': str(date.hour) + ":" + str(date.minute).zfill(2),
+            'timestamp_time_passed': '0',
+            'is_unread': False,
+            'is_cleared': False,
+            'is_forward': False,
+            'is_filtered_content': False,
             'is_filtered_content_bh': False,
             'is_filtered_content_account': False,
             'is_filtered_content_quasar': False,
             'is_filtered_content_invalid_app': False,
-            'is_spoof_warning' : False,
-            'source' : 'source:chat:web',
-            'source_tags[0]' : 'source:chat',
-            'html_body' : False,
-            'ui_push_phase' : 'V3',
-            'status' : '0',
+            'is_spoof_warning': False,
+            'source': 'source:chat:web',
+            'source_tags[0]': 'source:chat',
+            'html_body': False,
+            'ui_push_phase': 'V3',
+            'status': '0',
             'offline_threading_id': messageAndOTID,
-            'message_id' : messageAndOTID,
+            'message_id': messageAndOTID,
             'threading_id': generateMessageID(self.client_id),
             'ephemeral_ttl_mode:': '0',
-            'manual_retry_cnt' : '0',
-            'signatureID' : getSignatureID()
+            'manual_retry_cnt': '0',
+            'signatureID': getSignatureID()
         }
 
         # Set recipient
@@ -561,7 +572,7 @@ class Client(object):
     def _doSendRequest(self, data):
         """Sends the data to `SendURL`, and returns """
         r = self._post(ReqUrl.SEND, data)
-        
+
         if not r.ok:
             log.warning('Error when sending message: Got {} response'.format(r.status_code))
             return None
@@ -574,11 +585,11 @@ class Client(object):
             # 'errorDescription' is in the users own language!
             log.warning('Error #{} when sending message: {}'.format(j['error'], j['errorDescription']))
             return None
-        
+
         message_ids = []
         try:
             message_ids += [action['message_id'] for action in j['payload']['actions'] if 'message_id' in action]
-            message_ids[0] # Try accessing element
+            message_ids[0]  # Try accessing element
         except (KeyError, IndexError) as e:
             log.warning('Error when sending message: No message ids could be found')
             return None
@@ -593,11 +604,13 @@ class Client(object):
         if add_user_ids:
             return self.addUsersToChat(user_ids=add_user_ids, thread_id=recipient_id)
         elif image_id:
-            return self.sendImage(image_id=image_id, message=message, thread_id=recipient_id, thread_type=isUserToThreadType(is_user))
+            return self.sendImage(image_id=image_id, message=message, thread_id=recipient_id,
+                                  thread_type=isUserToThreadType(is_user))
         elif like:
             if not like in LIKES:
-                like = 'l' # Backwards compatability
-            return self.sendEmoji(emoji=None, size=LIKES[like], thread_id=recipient_id, thread_type=isUserToThreadType(is_user))
+                like = 'l'  # Backwards compatability
+            return self.sendEmoji(emoji=None, size=LIKES[like], thread_id=recipient_id,
+                                  thread_type=isUserToThreadType(is_user))
         else:
             return self.sendMessage(message, thread_id=recipient_id, thread_type=isUserToThreadType(is_user))
 
@@ -605,7 +618,7 @@ class Client(object):
         # type: (str, str, ThreadType) -> list
         """
         Sends a message to given (or default, if not) thread with an additional image.
-        
+
         :param message: message to send
         :param thread_id: user/group chat ID
         :param thread_type: specify whether thread_id is user or group chat
@@ -626,7 +639,7 @@ class Client(object):
         # type: (str, EmojiSize, str, ThreadType) -> list
         """
         Sends an emoji. If emoji and size are not specified a small like is sent. 
-        
+
         :param emoji: the chosen emoji to send. If not specified, default thread emoji is sent
         :param size: size of emoji to send
         :param thread_id: user/group chat ID
@@ -668,7 +681,7 @@ class Client(object):
         # type: (str, str, str, ThreadType) -> list
         """
         Sends an image from given URL to given (or default, if not) thread.        
-        
+
         :param image_url: URL of an image to upload and send
         :param message: additional message
         :param thread_id: user/group chat ID
@@ -678,10 +691,12 @@ class Client(object):
         if recipient_id is not None:
             thread_id = recipient_id
         if is_user is not None:
-            deprecation('sendRemoteImage(is_user)', deprecated_in='0.10.2', details='Use sendRemoteImage(thread_type) instead')
+            deprecation('sendRemoteImage(is_user)', deprecated_in='0.10.2',
+                        details='Use sendRemoteImage(thread_type) instead')
             thread_type = isUserToThreadType(is_user)
         if image is not None:
-            deprecation('sendRemoteImage(image)', deprecated_in='0.10.2', details='Use sendRemoteImage(image_url) instead')
+            deprecation('sendRemoteImage(image)', deprecated_in='0.10.2',
+                        details='Use sendRemoteImage(image_url) instead')
             image_url = image
         mimetype = guess_type(image_url)[0]
         remote_image = requests.get(image_url).content
@@ -694,7 +709,7 @@ class Client(object):
         # type: (str, str, str, ThreadType) -> list
         """
         Sends an image from given URL to given (or default, if not) thread.
-        
+
         :param image_path: path of an image to upload and send
         :param message: additional message
         :param thread_id: user/group chat ID
@@ -702,13 +717,16 @@ class Client(object):
         :return: a list of message ids of the sent message(s)
         """
         if recipient_id is not None:
-            deprecation('sendRemoteImage(recipient_id)', deprecated_in='0.10.2', details='Use sendLocalImage(thread_id) instead')
+            deprecation('sendRemoteImage(recipient_id)', deprecated_in='0.10.2',
+                        details='Use sendLocalImage(thread_id) instead')
             thread_id = recipient_id
         if is_user is not None:
-            deprecation('sendRemoteImage(is_user)', deprecated_in='0.10.2', details='Use sendLocalImage(thread_type) instead')
+            deprecation('sendRemoteImage(is_user)', deprecated_in='0.10.2',
+                        details='Use sendLocalImage(thread_type) instead')
             thread_type = isUserToThreadType(is_user)
         if image is not None:
-            deprecation('sendRemoteImage(image)', deprecated_in='0.10.2', details='Use sendLocalImage(image_path) instead')
+            deprecation('sendRemoteImage(image)', deprecated_in='0.10.2',
+                        details='Use sendLocalImage(image_path) instead')
             image_path = image
 
         thread_id, thread_type = self._getThreadId(thread_id, None)
@@ -720,7 +738,7 @@ class Client(object):
         # type: (list, str) -> list
         """
         Adds users to given (or default, if not) thread.
-        
+
         :param user_ids: list of user ids to add
         :param thread_id: group chat ID
         :return: a list of message ids of the sent message(s)
@@ -740,7 +758,7 @@ class Client(object):
         # type: (str, str) -> bool
         """
         Adds users to given (or default, if not) thread.
-        
+
         :param user_id: user ID to remove
         :param thread_id: group chat ID
         :return: true if user was removed
@@ -774,7 +792,7 @@ class Client(object):
     def changeGroupTitle(self, title, thread_id=None):
         """
         Change title of a group conversation.
-        
+
         :param title: new group chat title
         :param thread_id: group chat ID
         :return: a list of message ids of the sent message(s)
@@ -792,7 +810,7 @@ class Client(object):
         # type: (ChatColor, str, ThreadType) -> bool
         """
         Changes thread color to specified color. For more info about color names - see wiki.
-        
+
         :param new_color: new color name
         :param thread_id: user/group chat ID
         :return: True if color was changed
@@ -827,7 +845,7 @@ class Client(object):
                     "actor_id": self.uid,
                     "message_id": message_id,
                     "reaction": reaction.value
-                    }
+                }
             }
         }
 
@@ -838,7 +856,7 @@ class Client(object):
         # type: (TypingStatus, str, ThreadType) -> bool
         """
         Sets users typing status.
-        
+
         :param status: typing or not typing
         :param thread_id: user/group chat ID
         :return: True if status changed
@@ -908,7 +926,6 @@ class Client(object):
             messages.append(Message(**message))
         return list(reversed(messages))
 
-
     def getThreadList(self, start, length=20):
         # type: (int, int) -> list
         """Get thread list of your facebook account.
@@ -920,9 +937,9 @@ class Client(object):
         assert length < 21, '`length` is deprecated, max. last 20 threads are returned'
 
         data = {
-            'client' : self.client,
-            'inbox[offset]' : start,
-            'inbox[limit]' : length,
+            'client': self.client,
+            'inbox[offset]': start,
+            'inbox[limit]': length,
         }
 
         r = self._post(ReqUrl.THREADS, data)
@@ -956,7 +973,7 @@ class Client(object):
         form = {
             'client': 'mercury_sync',
             'folders[0]': 'inbox',
-            'last_action_timestamp': now() - 60*1000
+            'last_action_timestamp': now() - 60 * 1000
             # 'last_action_timestamp': 0
         }
 
@@ -971,25 +988,40 @@ class Client(object):
         }
         return result
 
-    def markAsDelivered(self, userID, threadID):
+    def markAsDelivered(self, message_id, thread_id):
+        """
+        Marks a message in thread as delivered.
+
+        :param message_id: message to mark as delivered 
+        :param thread_id: user/group thread where message is
+        :return: true if messaged marked as delivered
+        """
         data = {
-            "message_ids[0]": threadID,
-            "thread_ids[%s][0]" % userID: threadID
+            "message_ids[0]": message_id,
+            "thread_ids[%s][0]" % thread_id: message_id
         }
 
         r = self._post(ReqUrl.DELIVERED, data)
         return r.ok
 
-    def markAsRead(self, userID):
+    def markAsRead(self, thread_id, ts=None):
+        """
+        Marks thread as seen.
+
+        :param thread_id: user/group thread to mark as seen
+        :return: true if marked as read
+        """
+
         data = {
-            "watermarkTimestamp": now(),
+            "watermarkTimestamp": ts or now(),
             "shouldSendReadReceipt": True,
-            "ids[%s]" % userID: True
+            "ids[%s]" % thread_id: True
         }
 
         r = self._post(ReqUrl.READ_STATUS, data)
         return r.ok
 
+    @deprecated(deprecated_in='0.10.2', details='Use markAsRead(thread_id) instead')
     def markAsSeen(self):
         r = self._post(ReqUrl.MARK_SEEN, {"seen_timestamp": 0})
         return r.ok
@@ -1219,7 +1251,6 @@ class Client(object):
             except Exception as e:
                 self.onMessageError(exception=e, msg=m)
 
-
     @deprecated(deprecated_in='0.10.2', details='Use startListening() instead')
     def start_listening(self):
         return self.startListening()
@@ -1228,7 +1259,6 @@ class Client(object):
         """Start listening from an external event loop."""
         self.listening = True
         self.sticky, self.pool = self._getSticky()
-
 
     @deprecated(deprecated_in='0.10.2', details='Use doOneListen() instead')
     def do_one_listen(self, markAlive=True):
@@ -1251,7 +1281,6 @@ class Client(object):
         except requests.exceptions.Timeout:
             pass
 
-
     @deprecated(deprecated_in='0.10.2', details='Use stopListening() instead')
     def stop_listening(self):
         return self.stopListening()
@@ -1261,7 +1290,6 @@ class Client(object):
         self.listening = False
         self.sticky, self.pool = (None, None)
 
-
     def listen(self, markAlive=True):
         self.startListening()
         self.onListening()
@@ -1270,7 +1298,6 @@ class Client(object):
             self.doOneListen(markAlive)
 
         self.stopListening()
-
 
     def getUserInfo(self, *user_ids):
         """Get user info from id. Unordered.
@@ -1288,12 +1315,10 @@ class Client(object):
 
         user_ids = [fbidStrip(uid) for uid in user_ids]
 
-
-        data = {"ids[{}]".format(i):uid for i,uid in enumerate(user_ids)}
+        data = {"ids[{}]".format(i): uid for i, uid in enumerate(user_ids)}
         r = self._post(ReqUrl.USER_INFO, data)
         info = get_json(r.text)
-        full_data= [details for profile,details in info['payload']['profiles'].items()]
-        if len(full_data)==1:
-            full_data=full_data[0]
+        full_data = [details for profile, details in info['payload']['profiles'].items()]
+        if len(full_data) == 1:
+            full_data = full_data[0]
         return full_data
-
